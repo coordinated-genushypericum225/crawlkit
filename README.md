@@ -14,6 +14,7 @@
   <a href="https://pypi.org/project/crawlkit/"><img src="https://img.shields.io/pypi/v/crawlkit?color=blue" alt="PyPI"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python"></a>
   <a href="https://hub.docker.com/r/paparusi/crawlkit"><img src="https://img.shields.io/badge/docker-ready-2496ED.svg" alt="Docker"></a>
+  <a href="https://github.com/Paparusi/crawlkit/actions/workflows/ci.yml"><img src="https://github.com/Paparusi/crawlkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 <p align="center">
