@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authorize Device - CrawlKit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+  
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full">
+      
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <a href="/" class="text-3xl font-bold text-indigo-500">🕷️ CrawlKit</a>
+        <h1 class="text-2xl font-bold mt-6 mb-2">Authorize Device</h1>
+        <p class="text-gray-400">Connect your CLI or SDK to your account</p>
+      </div>
+
+      <!-- Auth Required -->
+      <div id="loginRequired" class="hidden bg-gray-900 p-8 rounded-lg border border-gray-800 text-center">
+        <p class="text-gray-300 mb-4">You need to be logged in to authorize a device.</p>
+        <a href="/login.html" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition">
+          Sign In
+        </a>
+      </div>
+
+      <!-- Approval Form -->
+      <div id="approvalForm" class="hidden bg-gray-900 p-8 rounded-lg border border-gray-800">
+        
+        <div class="text-center mb-6">
+          <div class="inline-block bg-indigo-900 border border-indigo-700 text-indigo-200 px-6 py-4 rounded-lg">
+            <div class="text-sm text-indigo-400 mb-1">Your authorization code:</div>
+            <div id="userCode" class="text-3xl font-mono font-bold tracking-widest"></div>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 mb-6">
+          <p class="text-gray-300 text-sm mb-2">
+            <strong id="clientName">CrawlKit CLI</strong> is requesting access to your account.
+          </p>
+          <p class="text-gray-400 text-xs">
+            This will create a new API key for the device. You can revoke it anytime from your dashboard.
+          </p>
+        </div>
+
+        <div id="errorMessage" class="hidden bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg text-sm mb-4"></div>
+
+        <div class="flex gap-3">
+          <button 
+            id="approveBtn"
+            class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            ✅ Approve
+          </button>
+          <button 
+            id="denyBtn"
+            class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition"
+          >
+            ❌ Deny
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Success Message -->
+      <div id="successMessage" class="hidden bg-gray-900 p-8 rounded-lg border border-green-700 text-center">
+        <div class="text-6xl mb-4">✅</div>
+        <h2 class="text-2xl font-bold text-green-400 mb-2">Device Authorized!</h2>
+        <p class="text-gray-300 mb-4">Your device is now connected.</p>
+        <p class="text-gray-400 text-sm">You can close this page and return to your terminal.</p>
+        <a href="/dashboard.html" class="inline-block mt-6 text-indigo-400 hover:text-indigo-300 transition">
+          Go to Dashboard →
+        </a>
+      </div>
+
+      <!-- Error Message -->
+      <div id="errorPage" class="hidden bg-gray-900 p-8 rounded-lg border border-red-700 text-center">
+        <div class="text-6xl mb-4">❌</div>
+        <h2 class="text-2xl font-bold text-red-400 mb-2">Invalid or Expired Code</h2>
+        <p class="text-gray-300 mb-4" id="errorPageMessage">The authorization code is invalid or has expired.</p>
+        <p class="text-gray-400 text-sm">Please try running the login command again in your terminal.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    const userCodeEl = document.getElementById('userCode');
+    const clientNameEl = document.getElementById('clientName');
+    const approvalForm = document.getElementById('approvalForm');
+    const loginRequired = document.getElementById('loginRequired');
+    const successMessage = document.getElementById('successMessage');
+    const errorPage = document.getElementById('errorPage');
+    const errorPageMessage = document.getElementById('errorPageMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const approveBtn = document.getElementById('approveBtn');
+    const denyBtn = document.getElementById('denyBtn');
+
+    // Get user code from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const userCode = urlParams.get('code');
+
+    if (!userCode) {
+      errorPageMessage.textContent = 'No authorization code provided in URL.';
+      errorPage.classList.remove('hidden');
+    } else {
+      // Check if user is logged in
+      const auth = getAuth();
+      
+      if (!auth || !auth.apiKey) {
+        // Not logged in - redirect to login with return URL
+        loginRequired.classList.remove('hidden');
+      } else {
+        // Show approval form
+        userCodeEl.textContent = userCode;
+        approvalForm.classList.remove('hidden');
+      }
+    }
+
+    // Approve button
+    approveBtn.addEventListener('click', async () => {
+      const auth = getAuth();
+      if (!auth || !auth.apiKey) {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      errorMessage.classList.add('hidden');
+      approveBtn.disabled = true;
+      approveBtn.textContent = 'Approving...';
+
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/device/approve`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.apiKey}`
+          },
+          body: JSON.stringify({ user_code: userCode })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || data.message || 'Authorization failed');
+        }
+
+        // Success!
+        approvalForm.classList.add('hidden');
+        successMessage.classList.remove('hidden');
+
+      } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.remove('hidden');
+        approveBtn.disabled = false;
+        approveBtn.textContent = '✅ Approve';
+      }
+    });
+
+    // Deny button
+    denyBtn.addEventListener('click', () => {
+      window.close();
+      // If window doesn't close (popup blockers), show message
+      setTimeout(() => {
+        alert('Authorization denied. You can close this page.');
+      }, 100);
+    });
+  </script>
+
+</body>
+</html>

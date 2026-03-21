@@ -1,0 +1,49 @@
+{
+  "name": "paparusi-crawlkit",
+  "version": "0.1.1",
+  "description": "Official JavaScript SDK for CrawlKit \u2014 Web + Video Intelligence API for AI",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./src/index.js",
+      "import": "./src/index.js",
+      "types": "./src/index.d.ts"
+    }
+  },
+  "files": [
+    "src/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crawl",
+    "scrape",
+    "web",
+    "video",
+    "ai",
+    "api",
+    "youtube",
+    "transcript",
+    "parser"
+  ],
+  "author": "CrawlKit <hello@crawlkit.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crawlkit/crawlkit-js"
+  },
+  "homepage": "https://crawlkit.vercel.app",
+  "bugs": {
+    "url": "https://github.com/crawlkit/crawlkit-js/issues"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

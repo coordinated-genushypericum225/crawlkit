@@ -1,0 +1,8 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0a0a1a"/>
+  <text x="600" y="200" text-anchor="middle" font-family="system-ui, sans-serif" font-size="72" font-weight="bold" fill="white">⚡ CrawlKit</text>
+  <text x="600" y="290" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" fill="#94a3b8">Web + Video Intelligence API for AI</text>
+  <text x="600" y="380" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#3b82f6">1 API call → Structured data from any URL or video</text>
+  <text x="600" y="460" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" fill="#64748b">10+ Smart Parsers · RAG-ready · Video Transcripts · Free tier</text>
+  <text x="600" y="540" text-anchor="middle" font-family="system-ui, sans-serif" font-size="22" fill="#22c55e">crawlkit.org</text>
+</svg>

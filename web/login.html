@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CrawlKit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+  
+  <div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full">
+      
+      <!-- Logo -->
+      <div class="text-center mb-8">
+        <a href="/" class="text-3xl font-bold text-indigo-500">🕷️ CrawlKit</a>
+        <h1 class="text-2xl font-bold mt-6 mb-2">Welcome back</h1>
+        <p class="text-gray-400">Sign in to your account</p>
+      </div>
+
+      <!-- Form -->
+      <div class="bg-gray-900 p-8 rounded-lg border border-gray-800">
+        <form id="loginForm" class="space-y-6">
+          
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              required
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium mb-2">Password</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              required
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div id="errorMessage" class="hidden bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg text-sm"></div>
+
+          <button 
+            type="submit" 
+            id="submitBtn"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition"
+          >
+            Sign In
+          </button>
+
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-400">
+          Don't have an account? 
+          <a href="/signup.html" class="text-indigo-500 hover:text-indigo-400 transition">Sign up</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorMessage = document.getElementById('errorMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      // Hide error
+      errorMessage.classList.add('hidden');
+
+      // Loading state
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Signing in...';
+      submitBtn.classList.add('btn-loading');
+
+      try {
+        const response = await fetch(`${API_URL}/v1/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || data.message || 'Login failed');
+        }
+
+        // Store auth
+        const key = data.api_key || data.apiKey || (data.api_keys && data.api_keys[0]);
+        setAuth(key, data.user);
+
+        // Redirect to dashboard
+        window.location.href = '/dashboard.html';
+
+      } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In';
+        submitBtn.classList.remove('btn-loading');
+      }
+    });
+  </script>
+
+</body>
+</html>

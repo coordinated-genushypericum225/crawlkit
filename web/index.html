@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrawlKit — Web + Video Intelligence API for AI</title>
+  <meta name="description" content="Extract structured data from any website or video. The only crawler that handles both web pages and video transcripts in one API call.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://crawlkit.org">
+  <meta property="og:title" content="CrawlKit — Web + Video Intelligence API for AI">
+  <meta property="og:description" content="1 API call. Web + Video. Structured data. 10+ smart parsers. Free 100 req/day.">
+  <meta property="og:image" content="https://crawlkit.org/img/og-cover.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="CrawlKit">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CrawlKit — Web + Video Intelligence API for AI">
+  <meta name="twitter:description" content="The only crawler that handles both web pages and video transcripts. Free tier available.">
+  <meta name="twitter:image" content="https://crawlkit.org/img/og-cover.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .gradient-text { background: linear-gradient(135deg, #818cf8, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .glow { box-shadow: 0 0 60px rgba(99, 102, 241, 0.15); }
+    .glow-sm { box-shadow: 0 0 30px rgba(99, 102, 241, 0.1); }
+    .hero-gradient { background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 70%); }
+    .code-window { background: #0d1117; border: 1px solid #21262d; border-radius: 12px; overflow: hidden; }
+    .code-header { background: #161b22; padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #21262d; }
+    .code-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .fade-in { animation: fadeIn 0.6s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .comparison-bad { border-left: 3px solid #ef4444; }
+    .comparison-good { border-left: 3px solid #22c55e; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; }
+  </style>
+</head>
+<body class="bg-[#0a0a12] text-gray-100">
+  
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full z-50 bg-[#0a0a12]/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex justify-between items-center h-16">
+        <a href="/" class="text-xl font-bold flex items-center gap-2">
+          <span class="text-2xl">⚡</span> CrawlKit
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="#problem" class="text-sm text-gray-400 hover:text-white transition">Why CrawlKit</a>
+          <a href="#features" class="text-sm text-gray-400 hover:text-white transition">Features</a>
+          <a href="#pricing" class="text-sm text-gray-400 hover:text-white transition">Pricing</a>
+          <a href="https://api.crawlkit.org/docs" class="text-sm text-gray-400 hover:text-white transition">API Docs</a>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="/login.html" class="text-sm text-gray-400 hover:text-white transition">Log in</a>
+          <a href="/signup.html" class="bg-brand-600 hover:bg-brand-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition">Get API Key</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-gradient pt-32 pb-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 bg-brand-900/30 border border-brand-700/30 text-brand-200 px-4 py-1.5 rounded-full text-sm mb-6">
+          <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+          The only crawler that handles web + video
+        </div>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+          Turn any URL into<br/>
+          <span class="gradient-text">structured data for AI</span>
+        </h1>
+        <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+          Websites, videos, PDFs — one API call, structured JSON output, RAG-ready chunks. No more messy HTML parsing.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+          <a href="/signup.html" class="bg-brand-600 hover:bg-brand-700 text-white px-8 py-3.5 rounded-lg font-semibold text-lg transition w-full sm:w-auto text-center">
+            Start Free →
+          </a>
+          <a href="https://api.crawlkit.org/docs" class="border border-gray-700 hover:border-gray-500 text-gray-300 px-8 py-3.5 rounded-lg font-medium text-lg transition w-full sm:w-auto text-center">
+            View API Docs
+          </a>
+        </div>
+        <p class="text-gray-500 text-sm">100 requests/day free · No credit card</p>
+      </div>
+
+      <!-- Hero Code Example -->
+      <div class="max-w-3xl mx-auto code-window glow">
+        <div class="code-header">
+          <div class="code-dot bg-red-500"></div>
+          <div class="code-dot bg-yellow-500"></div>
+          <div class="code-dot bg-green-500"></div>
+          <span class="text-gray-500 text-xs ml-2">example.py</span>
+        </div>
+        <div class="p-5 text-sm sm:text-base overflow-x-auto">
+<pre class="text-gray-300 leading-relaxed"><code><span class="text-purple-400">from</span> crawlkit <span class="text-purple-400">import</span> CrawlKit
+
+ck = CrawlKit(<span class="text-green-400">"your-api-key"</span>)
+
+<span class="text-gray-500"># Any webpage → structured data</span>
+page = ck.scrape(<span class="text-green-400">"https://vnexpress.net/article"</span>)
+<span class="text-gray-500"># → {title, author, date, content, chunks[]}</span>
+
+<span class="text-gray-500"># Same API for video — auto-detects platform</span>
+video = ck.scrape(<span class="text-green-400">"https://youtube.com/watch?v=dQw4w9WgXcQ"</span>)
+<span class="text-gray-500"># → {transcript, duration, chapters, chunks[]}</span></code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Bar -->
+  <section class="border-y border-white/5 py-8 px-4">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-center items-center gap-x-12 gap-y-4 text-gray-500 text-sm">
+      <span>Used with:</span>
+      <span class="text-gray-300 font-medium">YouTube</span>
+      <span class="text-gray-300 font-medium">TikTok</span>
+      <span class="text-gray-300 font-medium">VnExpress</span>
+      <span class="text-gray-300 font-medium">CafeF</span>
+      <span class="text-gray-300 font-medium">TVPL</span>
+      <span class="text-gray-300 font-medium">GitHub</span>
+      <span class="text-gray-300 font-medium">PDF</span>
+      <span class="text-gray-300 font-medium">+ any URL</span>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section id="problem" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Web data for AI is broken</h2>
+        <p class="text-gray-400 text-lg">Every AI builder hits the same walls</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
+        <!-- Pain Points -->
+        <div class="bg-red-950/20 border border-red-900/30 rounded-xl p-6 comparison-bad">
+          <h3 class="font-semibold text-red-400 mb-4">😤 Without CrawlKit</h3>
+          <ul class="space-y-3 text-gray-400 text-sm">
+            <li class="flex gap-2"><span class="text-red-500">✗</span> JS-rendered pages return empty HTML</li>
+            <li class="flex gap-2"><span class="text-red-500">✗</span> Cloudflare blocks your requests</li>
+            <li class="flex gap-2"><span class="text-red-500">✗</span> Hours cleaning messy HTML output</li>
+            <li class="flex gap-2"><span class="text-red-500">✗</span> RAG chunks are garbage → LLM hallucinates</li>
+            <li class="flex gap-2"><span class="text-red-500">✗</span> Video transcripts? Build your own extractor</li>
+            <li class="flex gap-2"><span class="text-red-500">✗</span> Each website needs custom parsing logic</li>
+          </ul>
+        </div>
+
+        <div class="bg-green-950/20 border border-green-900/30 rounded-xl p-6 comparison-good">
+          <h3 class="font-semibold text-green-400 mb-4">✨ With CrawlKit</h3>
+          <ul class="space-y-3 text-gray-400 text-sm">
+            <li class="flex gap-2"><span class="text-green-500">✓</span> Auto JS rendering when needed</li>
+            <li class="flex gap-2"><span class="text-green-500">✓</span> Anti-bot bypass built in</li>
+            <li class="flex gap-2"><span class="text-green-500">✓</span> Clean structured JSON, ready to use</li>
+            <li class="flex gap-2"><span class="text-green-500">✓</span> Smart chunks with token counts for RAG</li>
+            <li class="flex gap-2"><span class="text-green-500">✓</span> YouTube, TikTok transcripts in 2-3 seconds</li>
+            <li class="flex gap-2"><span class="text-green-500">✓</span> 10+ parsers auto-detect content type</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Unique Differentiator: Video -->
+  <section class="py-20 px-4 bg-gradient-to-b from-brand-950/30 to-transparent">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="tag bg-purple-500/10 text-purple-300 border border-purple-500/20 mb-4">🎬 Unique Feature</div>
+          <h2 class="text-3xl sm:text-4xl font-bold mb-4">Video intelligence<br/>no one else has</h2>
+          <p class="text-gray-400 mb-6">
+            Firecrawl can't do it. Crawl4AI can't do it. Jina can't do it.<br/>
+            CrawlKit extracts transcripts from YouTube, TikTok, and Facebook Video in seconds.
+          </p>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-center gap-3">
+              <span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs font-mono">2-3s</span>
+              <span class="text-gray-300">per video regardless of length</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs font-mono">0 MB</span>
+              <span class="text-gray-300">no video download — text + metadata only</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="bg-green-500/10 text-green-400 px-2 py-1 rounded text-xs font-mono">RAG</span>
+              <span class="text-gray-300">chunks by timestamp, ready for LLM</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-window glow-sm">
+          <div class="code-header">
+            <div class="code-dot bg-red-500"></div>
+            <div class="code-dot bg-yellow-500"></div>
+            <div class="code-dot bg-green-500"></div>
+            <span class="text-gray-500 text-xs ml-2">video_crawl.py</span>
+          </div>
+          <div class="p-5 text-sm overflow-x-auto">
+<pre class="text-gray-300 leading-relaxed"><code>result = ck.scrape(
+    <span class="text-green-400">"https://youtube.com/watch?v=abc"</span>
+)
+
+<span class="text-gray-500"># Full transcript</span>
+print(result.structured[<span class="text-green-400">"transcript"</span>])
+
+<span class="text-gray-500"># Duration, views, chapters</span>
+print(result.structured[<span class="text-green-400">"duration"</span>])  <span class="text-gray-500"># 1344</span>
+print(result.structured[<span class="text-green-400">"views"</span>])     <span class="text-gray-500"># 2.4M</span>
+
+<span class="text-gray-500"># RAG chunks by timestamp</span>
+<span class="text-purple-400">for</span> chunk <span class="text-purple-400">in</span> result.chunks:
+    print(chunk.text, chunk.tokens)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-bold mb-4">Built for AI pipelines</h2>
+        <p class="text-gray-400 text-lg">Everything you need to feed your LLM clean data</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">🧠</div>
+          <h3 class="font-semibold mb-2">Smart Parsers</h3>
+          <p class="text-gray-400 text-sm">10+ domain-specific parsers. News, legal docs, real estate, finance, video — auto-detected.</p>
+        </div>
+
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">📦</div>
+          <h3 class="font-semibold mb-2">RAG-Ready Chunks</h3>
+          <p class="text-gray-400 text-sm">Smart chunking by content structure — articles by paragraph, legal by clause, video by timestamp.</p>
+        </div>
+
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">🎬</div>
+          <h3 class="font-semibold mb-2">Video Transcripts</h3>
+          <p class="text-gray-400 text-sm">YouTube, TikTok, Facebook — full transcript extraction in 2-3 seconds. No video download.</p>
+        </div>
+
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">🌐</div>
+          <h3 class="font-semibold mb-2">JS Rendering</h3>
+          <p class="text-gray-400 text-sm">Auto-detects static vs dynamic pages. Playwright rendering when needed, httpx when not.</p>
+        </div>
+
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">🛡️</div>
+          <h3 class="font-semibold mb-2">Anti-Bot Bypass</h3>
+          <p class="text-gray-400 text-sm">Cloudflare, rate limiting, CAPTCHAs — handled automatically with retry logic.</p>
+        </div>
+
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6 hover:border-brand-500/30 transition">
+          <div class="text-3xl mb-3">🔄</div>
+          <h3 class="font-semibold mb-2">Learning Engine</h3>
+          <p class="text-gray-400 text-sm">Adapts to website changes. Learns optimal selectors and extraction patterns over time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="py-20 px-4 bg-white/[0.01]">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">How we compare</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-white/10">
+              <th class="text-left py-4 px-4 text-gray-400 font-medium"></th>
+              <th class="py-4 px-4 text-brand-400 font-bold">CrawlKit</th>
+              <th class="py-4 px-4 text-gray-400 font-medium">Firecrawl</th>
+              <th class="py-4 px-4 text-gray-400 font-medium">Crawl4AI</th>
+              <th class="py-4 px-4 text-gray-400 font-medium">Jina</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-white/5">
+              <td class="py-3 px-4 text-gray-300">Web crawling</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+            </tr>
+            <tr class="border-b border-white/5 bg-brand-500/5">
+              <td class="py-3 px-4 text-white font-medium">Video transcripts</td>
+              <td class="py-3 px-4 text-center text-green-400 font-bold">✓</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-3 px-4 text-gray-300">RAG chunks</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-3 px-4 text-gray-300">PDF extraction</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-green-400">✓</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+              <td class="py-3 px-4 text-center text-red-400">✗</td>
+            </tr>
+            <tr class="border-b border-white/5">
+              <td class="py-3 px-4 text-gray-300">Domain parsers</td>
+              <td class="py-3 px-4 text-center text-green-400">10+</td>
+              <td class="py-3 px-4 text-center text-gray-500">—</td>
+              <td class="py-3 px-4 text-center text-gray-500">—</td>
+              <td class="py-3 px-4 text-center text-gray-500">—</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 text-gray-300">Free tier</td>
+              <td class="py-3 px-4 text-center text-green-400">100/day</td>
+              <td class="py-3 px-4 text-center text-gray-400">500 credits</td>
+              <td class="py-3 px-4 text-center text-gray-400">OSS</td>
+              <td class="py-3 px-4 text-center text-gray-400">1M tokens</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SDK Section -->
+  <section id="sdk" class="py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">Install in 10 seconds</h2>
+        <p class="text-gray-400">Python and Node.js SDKs, or just use the REST API</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="code-window">
+          <div class="code-header">
+            <span class="text-gray-400 text-sm">🐍 Python</span>
+            <a href="https://pypi.org/project/crawlkit/" target="_blank" class="text-brand-400 text-xs ml-auto hover:text-brand-300">PyPI →</a>
+          </div>
+          <div class="p-4">
+            <code class="text-green-400 text-sm">pip install crawlkit</code>
+          </div>
+        </div>
+
+        <div class="code-window">
+          <div class="code-header">
+            <span class="text-gray-400 text-sm">📦 Node.js</span>
+            <a href="https://www.npmjs.com/package/paparusi-crawlkit" target="_blank" class="text-brand-400 text-xs ml-auto hover:text-brand-300">npm →</a>
+          </div>
+          <div class="p-4">
+            <code class="text-green-400 text-sm">npm install paparusi-crawlkit</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="py-20 px-4">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">Simple pricing</h2>
+        <p class="text-gray-400">Start free. Upgrade when you need more.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Free -->
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6">
+          <h3 class="font-semibold mb-1">Free</h3>
+          <div class="text-3xl font-bold mb-4">$0<span class="text-sm text-gray-400 font-normal">/mo</span></div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-6">
+            <li>✓ 100 requests/day</li>
+            <li>✓ Basic parsers</li>
+            <li>✓ Community support</li>
+          </ul>
+          <a href="/signup.html" class="block text-center border border-gray-700 hover:border-gray-500 text-gray-300 py-2.5 rounded-lg text-sm transition">Get Started</a>
+        </div>
+
+        <!-- Starter -->
+        <div class="bg-brand-600/10 border-2 border-brand-500/40 rounded-xl p-6 relative">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-600 text-white text-xs px-3 py-1 rounded-full font-medium">Popular</div>
+          <h3 class="font-semibold mb-1">Starter</h3>
+          <div class="text-3xl font-bold mb-4">$19<span class="text-sm text-gray-400 font-normal">/mo</span></div>
+          <ul class="space-y-2 text-sm text-gray-300 mb-6">
+            <li>✓ 10,000 requests/mo</li>
+            <li>✓ All parsers + video</li>
+            <li>✓ Email support</li>
+          </ul>
+          <a href="/signup.html" class="block text-center bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-lg text-sm font-medium transition">Get Started</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6">
+          <h3 class="font-semibold mb-1">Pro</h3>
+          <div class="text-3xl font-bold mb-4">$79<span class="text-sm text-gray-400 font-normal">/mo</span></div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-6">
+            <li>✓ 100,000 requests/mo</li>
+            <li>✓ Custom parsers</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <a href="/signup.html" class="block text-center border border-gray-700 hover:border-gray-500 text-gray-300 py-2.5 rounded-lg text-sm transition">Get Started</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="bg-white/[0.02] border border-white/5 rounded-xl p-6">
+          <h3 class="font-semibold mb-1">Enterprise</h3>
+          <div class="text-3xl font-bold mb-4">Custom</div>
+          <ul class="space-y-2 text-sm text-gray-400 mb-6">
+            <li>✓ Unlimited requests</li>
+            <li>✓ SLA guarantee</li>
+            <li>✓ On-premise option</li>
+          </ul>
+          <a href="mailto:contact@crawlkit.org" class="block text-center border border-gray-700 hover:border-gray-500 text-gray-300 py-2.5 rounded-lg text-sm transition">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-4">Stop parsing HTML.<br/>Start building AI.</h2>
+      <p class="text-gray-400 text-lg mb-8">Get your free API key and start extracting data in under 2 minutes.</p>
+      <a href="/signup.html" class="inline-block bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition">
+        Start Free →
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-12 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2 text-gray-400 text-sm">
+          <span class="text-lg">⚡</span> CrawlKit · Web + Video Intelligence API
+        </div>
+        <div class="flex gap-6 text-sm text-gray-500">
+          <a href="https://api.crawlkit.org/docs" class="hover:text-gray-300 transition">API Docs</a>
+          <a href="https://github.com/Paparusi" class="hover:text-gray-300 transition">GitHub</a>
+          <a href="mailto:contact@crawlkit.org" class="hover:text-gray-300 transition">Contact</a>
+        </div>
+        <div class="text-gray-500 text-sm">© 2026 CrawlKit</div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

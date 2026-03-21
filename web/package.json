@@ -1,0 +1,12 @@
+{
+  "name": "crawlkit-web",
+  "version": "1.0.0",
+  "description": "CrawlKit Frontend - Web + Video Intelligence API",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "start": "python3 -m http.server 8000"
+  },
+  "keywords": ["crawlkit", "web-scraping", "api", "frontend"],
+  "author": "CrawlKit",
+  "license": "MIT"
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - CrawlKit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+  
+  <!-- Login Screen -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center px-4">
+    <div class="max-w-md w-full">
+      <div class="text-center mb-8">
+        <div class="text-3xl font-bold text-indigo-500 mb-6">🔐 Admin Panel</div>
+        <h1 class="text-2xl font-bold mb-2">Master Key Required</h1>
+        <p class="text-gray-400">Enter your master API key to continue</p>
+      </div>
+      
+      <div class="bg-gray-900 p-8 rounded-lg border border-gray-800">
+        <form id="loginForm" class="space-y-6">
+          <div>
+            <label for="masterKey" class="block text-sm font-medium mb-2">Master Key</label>
+            <input 
+              type="password" 
+              id="masterKey" 
+              required
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition font-mono"
+              placeholder="ck_master_..."
+            />
+          </div>
+          
+          <div id="loginError" class="hidden bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded-lg text-sm"></div>
+          
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition">
+            Access Admin Panel
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Admin Panel -->
+  <div id="adminPanel" class="hidden min-h-screen">
+    
+    <!-- Header -->
+    <div class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-indigo-500">🕷️ CrawlKit Admin</h1>
+      <button id="adminLogout" class="text-gray-400 hover:text-white transition">Logout</button>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="bg-gray-900 border-b border-gray-800 px-6">
+      <div class="flex space-x-2">
+        <button data-tab="users" class="px-4 py-3 bg-indigo-600 rounded-t-lg transition">Users</button>
+        <button data-tab="apikeys" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-t-lg transition">API Keys</button>
+        <button data-tab="payments" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-t-lg transition">Payments</button>
+        <button data-tab="usage" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-t-lg transition">Usage</button>
+        <button data-tab="settings" class="px-4 py-3 bg-gray-800 hover:bg-gray-700 rounded-t-lg transition">Settings</button>
+      </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-6">
+      
+      <!-- Users Tab -->
+      <div id="usersTab" data-tab-content>
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold">Users</h2>
+          <input 
+            type="text" 
+            id="userSearch" 
+            oninput="searchUsers()"
+            placeholder="Search users..."
+            class="bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 focus:outline-none focus:border-indigo-500 transition"
+          />
+        </div>
+        
+        <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+          <table>
+            <thead class="bg-gray-800">
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Joined</th>
+                <th>Requests</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersTable">
+              <tr><td colspan="6" class="text-center text-gray-500 py-8">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- API Keys Tab -->
+      <div id="apikeysTab" data-tab-content class="hidden">
+        <h2 class="text-2xl font-bold mb-6">All API Keys</h2>
+        
+        <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+          <table>
+            <thead class="bg-gray-800">
+              <tr>
+                <th>Key</th>
+                <th>User</th>
+                <th>Plan</th>
+                <th>Requests</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="allKeysTable">
+              <tr><td colspan="5" class="text-center text-gray-500 py-8">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Payments Tab -->
+      <div id="paymentsTab" data-tab-content class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Pending Payments</h2>
+        
+        <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+          <table>
+            <thead class="bg-gray-800">
+              <tr>
+                <th>Date</th>
+                <th>User</th>
+                <th>Plan</th>
+                <th>Amount</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTable">
+              <tr><td colspan="5" class="text-center text-gray-500 py-8">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Usage Tab -->
+      <div id="usageTab" data-tab-content class="hidden">
+        <h2 class="text-2xl font-bold mb-6">System Statistics</h2>
+        
+        <div class="grid md:grid-cols-4 gap-6">
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+            <div class="text-gray-400 text-sm mb-2">Total Users</div>
+            <div id="totalUsers" class="text-3xl font-bold">0</div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+            <div class="text-gray-400 text-sm mb-2">Total API Keys</div>
+            <div id="totalKeys" class="text-3xl font-bold">0</div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+            <div class="text-gray-400 text-sm mb-2">Total Requests</div>
+            <div id="totalRequests" class="text-3xl font-bold">0</div>
+          </div>
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+            <div class="text-gray-400 text-sm mb-2">Today's Requests</div>
+            <div id="todayRequests" class="text-3xl font-bold">0</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Settings Tab -->
+      <div id="settingsTab" data-tab-content class="hidden">
+        <h2 class="text-2xl font-bold mb-6">Payment Settings</h2>
+        
+        <div class="max-w-4xl">
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Bank Account</h3>
+            
+            <div class="space-y-4">
+              <div>
+                <label for="bankSelect" class="block text-sm font-medium mb-2">Bank</label>
+                <select 
+                  id="bankSelect" 
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+                >
+                </select>
+              </div>
+              
+              <div>
+                <label for="accountNumber" class="block text-sm font-medium mb-2">Account Number</label>
+                <input 
+                  type="text" 
+                  id="accountNumber" 
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+                  placeholder="0123456789"
+                />
+              </div>
+              
+              <div>
+                <label for="accountHolder" class="block text-sm font-medium mb-2">Account Holder</label>
+                <input 
+                  type="text" 
+                  id="accountHolder" 
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+                  placeholder="NGUYEN VAN A"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Pricing</h3>
+            
+            <div class="grid md:grid-cols-2 gap-4">
+              <div>
+                <label for="starterPrice" class="block text-sm font-medium mb-2">Starter Plan ($)</label>
+                <input 
+                  type="number" 
+                  id="starterPrice" 
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+                  value="19"
+                />
+              </div>
+              
+              <div>
+                <label for="proPrice" class="block text-sm font-medium mb-2">Pro Plan ($)</label>
+                <input 
+                  type="number" 
+                  id="proPrice" 
+                  class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+                  value="79"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800 mb-6">
+            <h3 class="text-lg font-semibold mb-4">QR Preview</h3>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 class="text-sm font-medium text-gray-400 mb-3">Starter Plan</h4>
+                <img id="starterQR" src="" alt="Starter QR" class="w-full rounded-lg" />
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-gray-400 mb-3">Pro Plan</h4>
+                <img id="proQR" src="" alt="Pro QR" class="w-full rounded-lg" />
+              </div>
+            </div>
+          </div>
+          
+          <button onclick="saveSettings()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition">
+            Save Settings
+          </button>
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <script src="/js/config.js"></script>
+  <script src="/js/admin.js"></script>
+
+</body>
+</html>

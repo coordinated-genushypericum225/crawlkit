@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - CrawlKit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-950 text-gray-100">
+  
+  <div class="flex h-screen">
+    
+    <!-- Sidebar -->
+    <div class="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
+      <div class="p-6 border-b border-gray-800">
+        <a href="/" class="text-2xl font-bold text-indigo-500">🕷️ CrawlKit</a>
+      </div>
+      
+      <nav class="flex-1 p-4 space-y-2">
+        <button data-section="overview" class="sidebar-active w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+          📊 Overview
+        </button>
+        <button data-section="apikeys" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+          🔑 API Keys
+        </button>
+        <button data-section="usage" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+          📈 Usage
+        </button>
+        <button data-section="upgrade" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+          ⭐ Upgrade Plan
+        </button>
+        <button data-section="docs" class="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-800 transition">
+          📚 Docs
+        </button>
+      </nav>
+      
+      <div class="p-4 border-t border-gray-800 text-sm text-gray-400">
+        <a href="https://crawlkit.dev/docs" target="_blank" class="hover:text-white transition">API Docs</a>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      
+      <!-- Top Bar -->
+      <div class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-semibold">Dashboard</h1>
+        <div class="flex items-center space-x-4">
+          <span id="userName" class="text-gray-300"></span>
+          <span id="planBadge" class="plan-badge"></span>
+          <button id="logoutBtn" class="text-gray-400 hover:text-white transition">Logout</button>
+        </div>
+      </div>
+      
+      <!-- Content Area -->
+      <div class="flex-1 overflow-y-auto p-6">
+        
+        <!-- Overview Section -->
+        <div id="overviewSection" data-content>
+          <h2 class="text-2xl font-bold mb-6">Welcome back, <span id="welcomeName"></span>!</h2>
+          
+          <!-- Stats Cards -->
+          <div class="grid md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <div class="text-gray-400 text-sm mb-2">Total Requests</div>
+              <div id="totalRequests" class="text-3xl font-bold">0</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <div class="text-gray-400 text-sm mb-2">Today</div>
+              <div id="todayRequests" class="text-3xl font-bold">0</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <div class="text-gray-400 text-sm mb-2">This Month</div>
+              <div id="monthRequests" class="text-3xl font-bold">0</div>
+            </div>
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <div class="text-gray-400 text-sm mb-2">Rate Limit</div>
+              <div id="rateLimit" class="text-3xl font-bold">20/hr</div>
+            </div>
+          </div>
+          
+          <!-- Quick Start -->
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800 mb-6">
+            <h3 class="text-xl font-bold mb-4">Your API Key</h3>
+            
+            <div class="bg-gray-800 p-4 rounded-lg">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-400">API Key:</span>
+                <div class="space-x-2">
+                  <button onclick="revealKey()" class="text-indigo-500 hover:text-indigo-400 text-sm">Reveal</button>
+                  <button onclick="copyKey()" class="text-indigo-500 hover:text-indigo-400 text-sm">Copy</button>
+                </div>
+              </div>
+              <code id="exampleApiKey" class="masked-key text-gray-300"></code>
+            </div>
+          </div>
+          
+          <!-- SDK Quick Start -->
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+            <h3 class="text-xl font-bold mb-4">SDK Quick Start</h3>
+            <p class="text-gray-400 mb-6">Install the SDK and start scraping with your API key:</p>
+            
+            <div class="space-y-6">
+              
+              <!-- Python SDK -->
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-lg font-semibold text-indigo-400">🐍 Python</h4>
+                  <a href="https://pypi.org/project/crawlkit/" target="_blank" class="text-indigo-500 hover:text-indigo-400 text-sm">PyPI →</a>
+                </div>
+                
+                <div class="bg-gray-950 p-4 rounded-lg mb-3 border border-gray-800">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">Install:</span>
+                    <button onclick="navigator.clipboard.writeText('pip install crawlkit')" class="text-indigo-500 hover:text-indigo-400 text-xs">Copy</button>
+                  </div>
+                  <code class="text-green-400 text-sm">pip install crawlkit</code>
+                </div>
+                
+                <div class="bg-gray-950 p-4 rounded-lg border border-gray-800">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">Usage:</span>
+                    <button onclick="copyPythonExample()" class="text-indigo-500 hover:text-indigo-400 text-xs">Copy</button>
+                  </div>
+                  <pre id="pythonExample" class="text-sm text-gray-300 overflow-x-auto"><code>from crawlkit import CrawlKit
+
+ck = CrawlKit("<span class="masked-key">your-api-key</span>")
+result = ck.scrape("https://example.com")
+print(result.content)</code></pre>
+                </div>
+              </div>
+              
+              <!-- Node.js SDK -->
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-lg font-semibold text-indigo-400">📦 Node.js</h4>
+                  <a href="https://www.npmjs.com/package/paparusi-crawlkit" target="_blank" class="text-indigo-500 hover:text-indigo-400 text-sm">npm →</a>
+                </div>
+                
+                <div class="bg-gray-950 p-4 rounded-lg mb-3 border border-gray-800">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">Install:</span>
+                    <button onclick="navigator.clipboard.writeText('npm install paparusi-crawlkit')" class="text-indigo-500 hover:text-indigo-400 text-xs">Copy</button>
+                  </div>
+                  <code class="text-green-400 text-sm">npm install paparusi-crawlkit</code>
+                </div>
+                
+                <div class="bg-gray-950 p-4 rounded-lg border border-gray-800">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">Usage:</span>
+                    <button onclick="copyNodeExample()" class="text-indigo-500 hover:text-indigo-400 text-xs">Copy</button>
+                  </div>
+                  <pre id="nodeExample" class="text-sm text-gray-300 overflow-x-auto"><code>const { CrawlKit } = require('paparusi-crawlkit');
+
+const ck = new CrawlKit('<span class="masked-key">your-api-key</span>');
+const result = await ck.scrape('https://example.com');
+console.log(result.content);</code></pre>
+                </div>
+              </div>
+              
+              <!-- cURL -->
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-lg font-semibold text-indigo-400">🔧 REST API (cURL)</h4>
+                </div>
+                
+                <div class="bg-gray-950 p-4 rounded-lg border border-gray-800">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">Usage:</span>
+                    <button onclick="copyCurlExample()" class="text-indigo-500 hover:text-indigo-400 text-xs">Copy</button>
+                  </div>
+                  <pre id="curlExample" class="text-sm text-gray-300 overflow-x-auto"><code>curl -X POST https://api.crawlkit.org/v1/crawl \
+  -H "X-API-Key: <span class="masked-key">your-api-key</span>" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'</code></pre>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        
+        <!-- API Keys Section -->
+        <div id="apikeysSection" data-content class="hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">API Keys</h2>
+            <button onclick="openCreateKeyModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition">
+              + Create New Key
+            </button>
+          </div>
+          
+          <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+            <table>
+              <thead class="bg-gray-800">
+                <tr>
+                  <th>Name</th>
+                  <th>Key</th>
+                  <th>Plan</th>
+                  <th>Created</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="apiKeysTable">
+                <tr><td colspan="6" class="text-center text-gray-500 py-8">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Usage Section -->
+        <div id="usageSection" data-content class="hidden">
+          <h2 class="text-2xl font-bold mb-6">Usage Statistics</h2>
+          
+          <div class="bg-gray-900 p-6 rounded-lg border border-gray-800 mb-6">
+            <h3 class="text-lg font-semibold mb-4">Daily Requests (Last 30 Days)</h3>
+            <canvas id="usageChart"></canvas>
+          </div>
+          
+          <div class="bg-gray-900 rounded-lg border border-gray-800 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-800">
+              <h3 class="text-lg font-semibold">Recent Requests</h3>
+            </div>
+            <table>
+              <thead class="bg-gray-800">
+                <tr>
+                  <th>Timestamp</th>
+                  <th>URL</th>
+                  <th>Method</th>
+                  <th>Status</th>
+                  <th>Duration</th>
+                </tr>
+              </thead>
+              <tbody id="recentRequestsTable">
+                <tr><td colspan="5" class="text-center text-gray-500 py-8">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Upgrade Plan Section -->
+        <div id="upgradeSection" data-content class="hidden">
+          <h2 class="text-2xl font-bold mb-6">Upgrade Your Plan</h2>
+          
+          <div id="pendingPayment" class="hidden bg-yellow-900 border border-yellow-700 text-yellow-200 px-6 py-4 rounded-lg mb-6">
+            ⏳ Payment pending confirmation. We'll upgrade your account within 24 hours.
+          </div>
+          
+          <div class="grid md:grid-cols-3 gap-6">
+            
+            <!-- Starter -->
+            <div data-plan="starter" class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-bold mb-2">Starter</h3>
+              <div class="text-3xl font-bold mb-4">$19<span class="text-lg text-gray-400">/mo</span></div>
+              <ul class="space-y-2 mb-6 text-sm">
+                <li>✓ 200 requests/hour</li>
+                <li>✓ 20 batch jobs/day</li>
+                <li>✓ All parsers</li>
+                <li>✓ Email support</li>
+              </ul>
+              <button onclick="upgradeToStarter()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition">
+                Upgrade
+              </button>
+            </div>
+            
+            <!-- Pro -->
+            <div data-plan="pro" class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-bold mb-2">Pro</h3>
+              <div class="text-3xl font-bold mb-4">$79<span class="text-lg text-gray-400">/mo</span></div>
+              <ul class="space-y-2 mb-6 text-sm">
+                <li>✓ 1000 requests/hour</li>
+                <li>✓ 100 batch jobs/day</li>
+                <li>✓ Priority support</li>
+                <li>✓ Custom parsers</li>
+              </ul>
+              <button onclick="upgradeToPro()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition">
+                Upgrade
+              </button>
+            </div>
+            
+            <!-- Enterprise -->
+            <div data-plan="enterprise" class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-bold mb-2">Enterprise</h3>
+              <div class="text-3xl font-bold mb-4">Custom</div>
+              <ul class="space-y-2 mb-6 text-sm">
+                <li>✓ Custom rate limits</li>
+                <li>✓ Dedicated support</li>
+                <li>✓ SLA guarantee</li>
+                <li>✓ On-premise option</li>
+              </ul>
+              <a href="mailto:contact@crawlkit.dev" class="block text-center bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition">
+                Contact Sales
+              </a>
+            </div>
+            
+          </div>
+        </div>
+        
+        <!-- Docs Section -->
+        <div id="docsSection" data-content class="hidden">
+          <h2 class="text-2xl font-bold mb-6">API Documentation</h2>
+          
+          <div class="space-y-6">
+            
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-semibold mb-4">Authentication</h3>
+              <p class="text-gray-400 mb-4">Include your API key in the <code class="bg-gray-800 px-2 py-1 rounded">X-API-Key</code> header:</p>
+              <div class="code-block">
+curl -H "X-API-Key: your_api_key_here" \<br/>
+  https://api.crawlkit.org/v1/crawl
+              </div>
+            </div>
+            
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-semibold mb-4">Crawl Endpoint</h3>
+              <p class="text-gray-400 mb-2"><code class="bg-gray-800 px-2 py-1 rounded">POST /v1/crawl</code></p>
+              <p class="text-gray-400 mb-4">Extract content from any URL.</p>
+              <div class="code-block">
+{<br/>
+  "url": "https://vnexpress.net/article",<br/>
+  "format": "markdown" // optional: markdown | html | json<br/>
+}
+              </div>
+            </div>
+            
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-semibold mb-4">Video Transcript</h3>
+              <p class="text-gray-400 mb-2"><code class="bg-gray-800 px-2 py-1 rounded">POST /v1/video/transcript</code></p>
+              <p class="text-gray-400 mb-4">Get video transcripts from YouTube, TikTok, etc.</p>
+              <div class="code-block">
+{<br/>
+  "url": "https://youtube.com/watch?v=..."<br/>
+}
+              </div>
+            </div>
+            
+            <div class="bg-gray-900 p-6 rounded-lg border border-gray-800">
+              <h3 class="text-xl font-semibold mb-4">Batch Processing</h3>
+              <p class="text-gray-400 mb-2"><code class="bg-gray-800 px-2 py-1 rounded">POST /v1/batch</code></p>
+              <p class="text-gray-400 mb-4">Process multiple URLs in parallel.</p>
+              <div class="code-block">
+{<br/>
+  "urls": [<br/>
+    "https://example.com/1",<br/>
+    "https://example.com/2"<br/>
+  ]<br/>
+}
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <!-- Create Key Modal -->
+  <div id="createKeyModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-lg border border-gray-800 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold mb-4">Create New API Key</h3>
+      <div class="mb-6">
+        <label for="newKeyName" class="block text-sm font-medium mb-2">Key Name</label>
+        <input 
+          type="text" 
+          id="newKeyName" 
+          class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500 transition"
+          placeholder="My Project"
+        />
+      </div>
+      <div class="flex space-x-3">
+        <button onclick="createNewKey()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition">
+          Create
+        </button>
+        <button onclick="closeCreateKeyModal()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Payment Modal -->
+  <div id="paymentModal" class="hidden fixed inset-0 modal-backdrop flex items-center justify-center z-50">
+    <div class="bg-gray-900 p-8 rounded-lg border border-gray-800 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold mb-4">Upgrade to <span id="paymentPlan" class="text-indigo-500"></span></h3>
+      <div class="text-center mb-6">
+        <div class="text-3xl font-bold mb-2"><span id="paymentAmount"></span>/month</div>
+        <p class="text-gray-400 text-sm">Scan QR code to pay via VietQR</p>
+      </div>
+      
+      <img id="qrImage" class="hidden mx-auto mb-6 rounded-lg" alt="VietQR Payment" />
+      
+      <div class="space-y-3">
+        <button onclick="confirmPayment()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition">
+          Đã thanh toán
+        </button>
+        <button onclick="closePaymentModal()" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-lg transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/dashboard.js"></script>
+
+</body>
+</html>

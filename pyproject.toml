@@ -1,0 +1,8 @@
+[project]
+name = "crawlkit"
+version = "0.1.0"
+description = "Web + Video Intelligence API for AI"
+requires-python = ">=3.10"
+
+[project.scripts]
+crawlkit = "crawlkit.cli:main"

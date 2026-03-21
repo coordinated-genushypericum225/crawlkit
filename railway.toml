@@ -1,0 +1,7 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "python -m crawlkit"
+healthcheckPath = "/v1/health"
+healthcheckTimeout = 60
