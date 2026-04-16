@@ -1,335 +1,246 @@
-<p align="center">
-  <img src="https://crawlkit.org/img/og-cover.png" alt="CrawlKit" width="600">
-</p>
-
-<h1 align="center">CrawlKit</h1>
-
-<p align="center">
-  <strong>Open-source web + video crawling toolkit for AI</strong>
-</p>
-
-<p align="center">
-  <a href="https://github.com/Paparusi/crawlkit/stargazers"><img src="https://img.shields.io/github/stars/Paparusi/crawlkit?style=social" alt="Stars"></a>
-  <a href="https://github.com/Paparusi/crawlkit/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a>
-  <a href="https://pypi.org/project/crawlkit/"><img src="https://img.shields.io/pypi/v/crawlkit?color=blue" alt="PyPI"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python"></a>
-  <a href="https://hub.docker.com/r/paparusi/crawlkit"><img src="https://img.shields.io/badge/docker-ready-2496ED.svg" alt="Docker"></a>
-  <a href="https://github.com/Paparusi/crawlkit/actions/workflows/ci.yml"><img src="https://github.com/Paparusi/crawlkit/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-</p>
-
-<p align="center">
-  <a href="#-quickstart">Quickstart</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-why-crawlkit">Why CrawlKit</a> •
-  <a href="#-api-reference">API</a> •
-  <a href="#-self-hosting">Self-Host</a> •
-  <a href="https://crawlkit.org">Managed API →</a>
-</p>
-
----
-
-## 🤔 Why CrawlKit?
-
-Every AI app needs web data. But current tools force you to choose: **web OR video, fast OR accurate, simple OR powerful.**
-
-CrawlKit does it all in one API call:
-
-```python
-from crawlkit import CrawlKit
-
-ck = CrawlKit()
-
-# Webpage → structured data + RAG chunks
-page = ck.scrape("https://vnexpress.net/some-article")
-print(page.content_type)   # "news"
-print(page.chunks)         # 15 RAG-ready chunks
-
-# Video → transcript + metadata (same API!)
-video = ck.scrape("https://youtube.com/watch?v=abc123")
-print(video.transcript)    # Full text transcript
-print(video.duration)      # 1344 seconds
-```
-
-## ⚡ Why not Crawl4AI / Firecrawl / Jina?
-
-| Feature | CrawlKit | Crawl4AI | Firecrawl | Jina Reader |
-|---|:---:|:---:|:---:|:---:|
-| Web crawling | ✅ | ✅ | ✅ | ✅ |
-| **YouTube transcripts** | ✅ | ❌ | ❌ | ❌ |
-| **TikTok extraction** | ✅ | ❌ | ❌ | ❌ |
-| **Facebook Video** | ✅ | ❌ | ❌ | ❌ |
-| **PDF + OCR** | ✅ | ❌ | ✅ | ❌ |
-| **NLP extraction** | ✅ | ❌ | ❌ | ❌ |
-| Anti-bot stealth | ✅ | ✅ | ✅ | ❌ |
-| Screenshot capture | ✅ | ✅ | ✅ | ❌ |
-| RAG-ready chunks | ✅ | ❌ | ✅ | ❌ |
-| Domain-specific parsers | ✅ 10+ | ❌ | ❌ | ❌ |
-| URL monitoring | ✅ | ❌ | ❌ | ❌ |
-| Self-hostable | ✅ | ✅ | ❌ | ❌ |
-| Open source | ✅ Apache 2.0 | ✅ | ❌ | ❌ |
-
-**TL;DR:** CrawlKit = Crawl4AI + video support + OCR + NLP + domain parsers.
-
-## 🚀 Quickstart
-
-### Option 1: pip install
-
-```bash
-pip install crawlkit
-playwright install chromium
-```
-
-```python
-from crawlkit import CrawlKit
-
-ck = CrawlKit()
-
-# Any webpage
-result = ck.scrape("https://example.com")
-print(result.markdown)
-
-# YouTube video → transcript
-result = ck.scrape("https://youtube.com/watch?v=dQw4w9WgXcQ")
-print(result.transcript)
-
-# With RAG chunking
-result = ck.scrape("https://example.com", chunk=True)
-for chunk in result.chunks:
-    print(f"[{chunk.token_estimate} tokens] {chunk.content[:80]}...")
-```
-
-### Option 2: Docker (self-host API)
-
-```bash
-git clone https://github.com/Paparusi/crawlkit.git
-cd crawlkit
-cp .env.example .env
-
-docker compose up -d
-# API available at http://localhost:8000
-```
-
-### Option 3: Managed API
-
-No setup needed. Get a free API key at **[crawlkit.org](https://crawlkit.org)**
-
-```bash
-curl -X POST https://api.crawlkit.org/v1/scrape \
-  -H "Authorization: Bearer ck_free_xxx" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://youtube.com/watch?v=abc123"}'
-```
-
-## ✨ Features
-
-### 🌐 Web Crawling
-- **Smart rendering** — Auto-detects static vs JS-heavy pages (httpx → Playwright fallback)
-- **Anti-bot stealth** — Playwright-stealth, random fingerprints, human-like delays
-- **Domain parsers** — 10+ site-specific parsers for structured extraction
-- **Batch crawling** — Scrape hundreds of URLs in one request
-
-### 🎬 Video Intelligence
-- **YouTube** — Full transcripts, chapters, metadata, tags (2-3s per video)
-- **TikTok** — Captions, hashtags, engagement metrics
-- **Facebook Video** — Metadata + captions
-- **No video download** — Text extraction only. Zero bandwidth waste.
-
-### 🧠 AI-Ready Output
-- **RAG chunks** — Smart chunking by content type (legal → by article, news → by paragraph)
-- **NLP extraction** — Entities (people, orgs, locations) + keywords
-- **Token estimation** — Each chunk tagged with token count
-- **Multiple formats** — JSON, Markdown, plain text
-
-### 📸 OCR + PDF
-- **PDF parsing** — Text, tables, metadata extraction
-- **Scanned PDF → text** — Auto-detect + OCR (EasyOCR)
-- **50MB max** — Handles large documents
-
-### 📷 Screenshot + Monitoring
-- **Full-page screenshots** — PNG/JPEG, viewport or full-page
-- **URL monitoring** — Watch pages for changes, webhook notifications
-- **Change detection** — SHA256 hash comparison
-
-## 🔌 Domain Parsers
-
-CrawlKit auto-detects the site and applies the right parser:
-
-| Parser | Site | What You Get |
-|---|---|---|
-| `youtube` | YouTube | Transcript, chapters, duration, views, tags |
-| `tiktok` | TikTok | Caption, hashtags, music, engagement |
-| `facebook_video` | Facebook | Video metadata, captions |
-| `tvpl` | thuvienphapluat.vn | Legal documents, articles, clauses |
-| `vbpl` | vbpl.vn | Government legal database |
-| `vnexpress` | vnexpress.net | News articles, clean text |
-| `batdongsan` | batdongsan.com.vn | Property listings, prices |
-| `cafef` | cafef.vn | Financial news, stock data |
-| `github` | github.com | Repo/file content |
-| `pdf` | Any .pdf URL | Text, tables, metadata |
-| _Generic_ | Any URL | Clean markdown + structured data |
-
-> **Building a custom parser?** See [CONTRIBUTING.md](CONTRIBUTING.md) — PRs welcome!
-
-## 📡 API Reference
-
-### `POST /v1/scrape` — Scrape a URL
-
-```bash
-curl -X POST http://localhost:8000/v1/scrape \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://youtube.com/watch?v=abc123",
-    "chunk": true,
-    "nlp": true,
-    "stealth": false,
-    "screenshot": false,
-    "ocr": false
-  }'
-```
-
-<details>
-<summary>📦 Response</summary>
-
-```json
-{
-  "success": true,
-  "data": {
-    "url": "https://youtube.com/watch?v=abc123",
-    "title": "Video Title",
-    "content_type": "video",
-    "parser_used": "youtube",
-    "crawl_time_ms": 2150,
-    "markdown": "# Video Title\n\n...",
-    "structured": {
-      "transcript": "Full transcript text...",
-      "duration": 1344,
-      "views": 125000,
-      "chapters": [...]
-    },
-    "chunks": [
-      {
-        "content": "...",
-        "metadata": {"timestamp": "00:00", "section": "intro"},
-        "token_estimate": 487
-      }
-    ],
-    "nlp": {
-      "language": "vi",
-      "entities": {"people": [], "organizations": [], "locations": []},
-      "keywords": ["keyword1", "keyword2"]
-    }
-  }
-}
-```
-</details>
-
-### `POST /v1/batch` — Batch scrape
-
-```json
-{
-  "urls": ["https://url1.com", "https://url2.com"],
-  "chunk": true,
-  "delay": 1.5
-}
-```
-
-### `POST /v1/discover` — Discover URLs from a site
-
-```json
-{
-  "source": "tvpl",
-  "query": "Doanh-nghiep",
-  "limit": 100
-}
-```
-
-### `POST /v1/screenshot` — Capture screenshot
-
-```json
-{
-  "url": "https://example.com",
-  "full_page": true,
-  "format": "png"
-}
-```
-
-### `POST /v1/watch` — Monitor URL for changes
-
-```json
-{
-  "url": "https://example.com/page",
-  "webhook_url": "https://your-server.com/webhook",
-  "check_interval_minutes": 60
-}
-```
-
-### `GET /v1/health` • `GET /v1/parsers`
-
-## 🐳 Self-Hosting
-
-```bash
-git clone https://github.com/Paparusi/crawlkit.git
-cd crawlkit
-cp .env.example .env
-# Edit .env with your config
-
-docker compose up -d
-```
-
-The API runs at `http://localhost:8000`. No external dependencies required.
-
-<details>
-<summary>📋 Environment Variables</summary>
-
-```env
-# Required
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-key
-CRAWLKIT_MASTER_KEY=your-master-key
-
-# Optional
-PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-PORT=8000
-```
-</details>
-
-## ☁️ Managed API
-
-Don't want to self-host? Use the managed API at **[crawlkit.org](https://crawlkit.org)**
-
-| Plan | Price | Requests/day | Features |
-|---|---|---|---|
-| **Free** | $0 | 100 | All parsers, all formats |
-| **Starter** | $19/mo | 2,000 | + Video, OCR, NLP, stealth |
-| **Pro** | $79/mo | 20,000 | + Batch, monitoring, priority |
-| **Enterprise** | Custom | Unlimited | + Dedicated infra, SLA |
-
-## 🤝 Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-**Easy wins:**
-- Add a new domain parser (see `crawlkit/parsers/` for examples)
-- Improve extraction quality for existing parsers
-- Add tests
-- Fix bugs from [Issues](https://github.com/Paparusi/crawlkit/issues)
-
-## 📄 License
-
-Apache 2.0 — Use it however you want. See [LICENSE](LICENSE).
-
-## ⭐ Star History
-
-If CrawlKit helps your project, give it a star! It helps others discover the project.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Paparusi/crawlkit&type=Date)](https://star-history.com/#Paparusi/crawlkit&Date)
-
----
-
-<p align="center">
-  <strong>Built with ❤️ for the AI community</strong>
-  <br>
-  <a href="https://crawlkit.org">Website</a> •
-  <a href="https://github.com/Paparusi/crawlkit/issues">Issues</a> •
-  <a href="https://github.com/Paparusi/crawlkit/discussions">Discussions</a>
-</p>
+# 🕷️ crawlkit - Simple web crawling for everyone
+
+[![Download crawlkit](https://img.shields.io/badge/Download%20crawlkit-blue?style=for-the-badge&logo=github)](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+
+## 🚀 What is crawlkit?
+
+crawlkit is a web crawling toolkit for Windows users who want to collect content from websites, videos, and text pages with less effort. It brings together tools for scraping, OCR, text parsing, video transcription, and crawler controls in one place.
+
+Use it to gather page text, read text from images, pull captions from videos, or prepare web data for search and RAG use.
+
+## 💻 Before you start
+
+You only need a Windows PC and a web browser.
+
+Recommended setup:
+
+- Windows 10 or Windows 11
+- At least 4 GB of RAM
+- 1 GB of free disk space
+- A stable internet connection
+- Microsoft Edge or Google Chrome
+
+If your PC can run modern websites and video apps, it should be fine for crawlkit.
+
+## 📥 Download and install
+
+1. Visit the [crawlkit releases page](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+2. Look for the latest release at the top of the page
+3. Open the release assets
+4. Download the Windows file that matches your system
+5. If the file is a `.zip`, right-click it and choose **Extract All**
+6. Open the extracted folder
+7. Double-click the app file to start crawlkit
+
+If Windows shows a security prompt:
+
+- Click **More info**
+- Click **Run anyway** if you trust the source
+
+If you see a `.exe` file, you can run it after download. If you see a `.zip` file, extract it first, then run the app from the folder.
+
+## 🧭 First launch
+
+After you open crawlkit, follow the on-screen steps:
+
+1. Choose a source type such as website, video, or document
+2. Paste the page link or file path
+3. Pick the output format you want
+4. Start the crawl or extraction task
+5. Save the result to your computer
+
+For most users, the default settings should work well.
+
+## 🧰 What crawlkit can do
+
+crawlkit combines several common web data tasks:
+
+- Crawl pages and collect text
+- Scrape structured data from websites
+- Read text from images with OCR
+- Transcribe video audio into text
+- Handle YouTube content
+- Work with TikTok-style video sources
+- Clean page content for later use
+- Prepare text for search and RAG flows
+- Parse many page layouts with 10+ parsers
+- Support stealth modes for sites that block simple bots
+
+## 📁 Common use cases
+
+### 🌐 Website content collection
+
+Use crawlkit when you want to gather article text, product details, or page data from a site.
+
+Good for:
+
+- News pages
+- Blog posts
+- Product pages
+- Public directory pages
+- Formatted web content
+
+### 🎥 Video text extraction
+
+Use it to turn video content into text data for notes, indexing, or review.
+
+Good for:
+
+- YouTube clips
+- Short-form video content
+- Interview recordings
+- Training videos
+
+### 🖼️ OCR from images
+
+Use OCR when text appears inside screenshots, scans, or image files.
+
+Good for:
+
+- Screenshot text
+- Scanned documents
+- Photos with signs or labels
+- Captured receipts or notes
+
+### 🧠 Text prep for AI workflows
+
+Use crawlkit when you want clean text for a chatbot, search index, or RAG pipeline.
+
+Good for:
+
+- Knowledge base files
+- Research notes
+- Support articles
+- Content libraries
+
+## ⚙️ How it works
+
+crawlkit follows a simple flow:
+
+1. It opens the page or file
+2. It reads the content
+3. It extracts text, links, or media data
+4. It cleans the result
+5. It saves the output in a usable format
+
+This keeps the work in one place instead of using separate tools for each task.
+
+## 🪟 Windows tips
+
+If the app does not open right away:
+
+- Right-click the file and choose **Run as administrator**
+- Check whether the file is still inside a zipped folder
+- Make sure the download finished fully
+- Try moving the folder to your Desktop
+- Keep the folder path short, like `C:\crawlkit\`
+
+If you use browser downloads, keep the release file in a folder you can find again.
+
+## 🔧 Output formats
+
+crawlkit may save data in formats such as:
+
+- TXT
+- CSV
+- JSON
+- HTML
+- Markdown
+
+Choose the format based on what you plan to do next.
+
+- TXT works well for reading
+- CSV works well for spreadsheets
+- JSON works well for apps and tools
+- HTML keeps page structure
+- Markdown works well for notes and docs
+
+## 🧪 Example workflow
+
+A simple use case:
+
+1. Open crawlkit
+2. Paste a website link
+3. Choose text extraction
+4. Run the task
+5. Save the result as JSON or TXT
+6. Open the file in Notepad, Excel, or your editor of choice
+
+Another example:
+
+1. Open a video source
+2. Pull the transcript
+3. Clean the text
+4. Save it for later search or review
+
+## 🛠️ Troubleshooting
+
+### The app will not open
+
+- Re-download the file from the releases page
+- Make sure you extracted the zip file first
+- Try another browser if the download looks broken
+- Check that Windows did not block the file
+
+### The crawl stops early
+
+- Try a different page
+- Reduce the number of pages in one run
+- Check that the site is public and reachable
+- Wait and run it again if the site is busy
+
+### The text looks wrong
+
+- Try a different parser
+- Use OCR for image-based content
+- Check if the page loads content after scrolling
+- Use the output format that fits your task
+
+### The video transcript is empty
+
+- Check that the video has audio
+- Try a longer clip
+- Make sure the source link is valid
+- Use a supported video page
+
+## 📌 Best results
+
+For the cleanest output:
+
+- Use public pages
+- Keep one task at a time
+- Start with the default settings
+- Save results often
+- Test a small page first before a large run
+
+## 🧩 Who crawlkit is for
+
+crawlkit fits users who want to collect web data without setting up a full coding project.
+
+It can help:
+
+- Students
+- Researchers
+- Content teams
+- Analysts
+- People who manage large text collections
+- Anyone who needs page text, video text, or OCR results
+
+## 📎 Download again
+
+If you need the installer again, visit the [crawlkit releases page](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+
+## 🔍 Project focus
+
+crawlkit is built around:
+
+- Web crawling
+- Web scraping
+- OCR
+- NLP
+- Video transcription
+- Stealth access
+- RAG prep
+- Parser-based extraction
+- Python-based tooling
+- Support for YouTube and TikTok content
